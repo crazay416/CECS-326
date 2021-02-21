@@ -21,7 +21,7 @@ void* SimpleThread(void *which){
 	#ifdef PTHREAD_SYNC
 		pthread_mutex_lock(&mutex);
 	#endif	
-		
+		// hello
 		val = SharedVariable;
 		printf("*** thread %d sees value %d\n", *iptr, val);
 		SharedVariable = val + 1;
