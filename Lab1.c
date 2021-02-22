@@ -21,7 +21,7 @@ void* SimpleThread(void *which){
 	#ifdef PTHREAD_SYNC
 		pthread_mutex_lock(&mutex);
 	#endif	
-		// hello
+		
 		val = SharedVariable;
 		printf("*** thread %d sees value %d\n", *iptr, val);
 		SharedVariable = val + 1;
@@ -30,8 +30,9 @@ void* SimpleThread(void *which){
 	#endif
 	}
 	
-	
-	pthread_barrier_wait(&barrier);
+	#ifdef PTHREAD_SYNC
+		pthread_barrier_wait(&barrier);
+	#endif
 	
 	val = SharedVariable;
 	printf("Thread %d sees final value %d\n", *iptr, val);
@@ -41,6 +42,11 @@ void* SimpleThread(void *which){
 int main(int argc,char **argv){
 	if(argc < 2){
 		printf("Less than what is expected\n");
+		exit(-1);
+	}
+	
+	if(atoi(argv[1]) == 0){
+		printf("Please input a number greater than 0\n");
 		exit(-1);
 	}
 	
