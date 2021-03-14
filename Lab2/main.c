@@ -34,24 +34,70 @@ void* bubbleSort(void* argv){
 }
 
 
-int main(){
+void* merge(void* argv){
+	struct sort halfOfArray = *(struct sort*) argv;
+	int b[arraySize];
+	int i;
+	int currentIndex = 0;
+	int down = 0;
+	int up = halfOfArray.upperBound;
+	
+	while (down < halfOfArray.upperBound && up < arraySize){
+		if(numArray[down] < numArray[up]){
+			b[currentIndex++] = numArray[down++];
+		}
+		else{
+			b[currentIndex++] = numArray[up++];
+		}
+	}
 
 	
-	struct sort structures[1];
-	structures[0].lowerBound = 0;
-	structures[0].upperBound = arraySize;
-	pthread_t threads[1];
-	
-	for(int i = 0; i < 1; i++){
-		pthread_create(&threads[i], NULL, bubbleSort, &structures);
+	while(down < halfOfArray.upperBound){
+		b[currentIndex++] = numArray[down++];
 	}
 	
-	for(int i = 0; i < 1; i++){
+	while(up < arraySize){
+		b[currentIndex] = numArray[up++];
+	}
+	
+	for(i = 0; i < arraySize; i++){
+		numArray[i] = b[i];
+	}
+	
+	return NULL;
+
+
+
+}
+
+int main(){
+
+	struct sort half[2];
+	
+	half[0].lowerBound = 0;
+	half[0].upperBound = arraySize / 2;
+	
+	half[1].lowerBound = half[0].upperBound;
+	half[1].upperBound = arraySize;
+	
+	pthread_t threads[2];
+	
+	for(int i = 0; i < 2; i++){
+		pthread_create(&threads[i], NULL, bubbleSort, &half[i]);
+	}
+	
+	for(int i = 0; i < 2; i++){
 		pthread_join(threads[i], NULL);
 	}
+	
+	pthread_t mergeThread;
+	pthread_create(&mergeThread, NULL, merge, &half[0]);
+	pthread_join(mergeThread, NULL);
 	
 	for(int i = 0; i < arraySize; i++){
 		printf("%d, ", numArray[i]);
 	}
+	
+	printf("\n\n");
 
 }
